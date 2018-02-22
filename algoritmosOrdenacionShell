@@ -27,7 +27,6 @@ function burbuja {
 			fi
 		done
 	done
-	#echo "${v[@]}"
 }
 
 # seleccion
@@ -75,7 +74,6 @@ function seleccion {
 		v[$posMenor]=$aux
 		j=$(( $j + 1 ))
 	done
-	#echo "${v[@]}"
 }
 
 # insercion
@@ -118,8 +116,6 @@ function inserccion {
 		fi
 		let i=$i+1
 	done
-
-	#echo "${v[@]}"
 }
 
 # 	shellSort
@@ -430,36 +426,5 @@ echo $filaInserccion >> resultado
 echo $filaMerge >> resultado
 echo $filaQuicksort >> resultado
 echo `cat resultado`
-
-# elementos=10
-# rellenar
-# echo ${v[@]}
-# mergeSort 0 9
-# echo ${v[@]}
-
-# rellenar
-
-# echo "El vector es: "
-# echo "${v[*]}"
-
-# echo "Metodo de ordenacion burbuja"
-# inicio=$(date +%N)
-# burbuja 
-# fin=$(date +%N)
-# tiempoEmpleado=$(($fin-$inicio))
-# echo $inicio
-# echo $fin
-# echo $tiempoEmpleado
-# # borrado del vector
-# v=()
-
-# rellenar
-
-# echo "El vector es: "
-# echo "${v[*]}"
-
-# echo "Metodo de ordenacion seleccion"
-# seleccion 
-
 
 
