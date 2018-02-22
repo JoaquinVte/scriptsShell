@@ -2,7 +2,12 @@
 #Nombre del archivo: aleatorio
 #Fecha de creación: jue feb 15 21:44:46 CET 2018
 #Autor: joaalsai
-#Descripción del script:
+#Descripción del script: Script para analizar la eficiencia de los distintos algoritmos de ordenacion
+#							- Burbuja
+#							- Inserccion
+#							- Seleccion
+#							- MergeSort
+#							- QuickSort
 #Ejemplo:
 
 
