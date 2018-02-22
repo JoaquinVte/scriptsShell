@@ -1,0 +1,465 @@
+#!/bin/bash
+#Nombre del archivo: aleatorio
+#Fecha de creación: jue feb 15 21:44:46 CET 2018
+#Autor: joaalsai
+#Descripción del script:
+#Ejemplo:
+
+
+# El metodo de la burbuja es uno de los mas simples, es tan facil como comparar todos
+# los elementos de una lista contra todos, si se cumple que uno es mayor o menor a
+# otro, entonces los intercambia de posición.
+# La burbuja mas simple de todas es la que compara todos con todos, generando comparaciones 
+# extras, por ejemplo, no tiene sentido que se compare con sigo mismo o que se compare 
+# con los valores anteriores a el, ya que supuestamente, ya estan ordenados.
+
+function burbuja {
+	for i in `seq 1 $(( ${#v[*]} - 1 ))`
+	do
+		for j in `seq 0 $(( ${#v[*]} - 2 ))`
+		do
+			k=$(($j+1))
+			if [ ${v[$j]} -gt ${v[$k]} ]
+			then
+				aux=${v[$j]}
+				v[$j]=${v[$k]}
+				v[$k]=$aux
+			fi
+		done
+	done
+	#echo "${v[@]}"
+}
+
+# seleccion
+# Este método considera que el array está formado por 2 partes: una parte ordenada (la
+# izquierda) que estará vacía al principio y al final comprende todo el array; y una parte
+# desordenada (la derecha) que al principio comprende todo el array y al final estará vacía.
+# El algoritmo toma elementos de la parte derecha y los coloca en la parte izquierda; 
+# empieza por el menor elemento de la parte desordenada y lo intercambia con el que ocupa
+# su posición en la parte ordenada. Así, en la la primera iteración se busca el menor
+# elemento y se intercambia con el que ocupa la posición 0; en la segunda, se busca el menor
+# elemento entre la posición 1 y el final y se intercambia con el elemento en la posición 1.
+# De esta manera las dos primeras posiciones del array están ordenadas y contienen los dos
+# elementos menores dentro del array. Este proceso continúa hasta ordenar todos los
+# elementos del array. 
+# En cada pasada se coloca un elemento en su lugar, y la variable j marca donde empezar la
+# búsqueda en la parte desordenada, que será secuencial si no tenemos más información. La
+# búsqueda del siguiente elemento menor comienza suponiendo que dicho elemento es j. Se
+# comprueba la hipótesis comparándolo con cada uno de los restantes. Si se encuentra uno
+# menor, se intercambia. 
+# El número de comparaciones que realiza este algoritmo es independiente de la ordenación
+# inicial. El bucle interno hace length-1 comparaciones la primera vez, length-2 la segunda,...,
+# y 1 la última. El bucle externo hace length-1 búsquedas. El total de comparaciones es
+# (length^2-length)/2. Por tanto el orden de complejidad es cuadrático (O(length^2)).
+
+
+function seleccion {
+	j=0
+	while [ $j -lt $((${#v[*]}-1)) ]
+	do
+		posMenor=$j
+
+		# Busco el elemento mas pequeño del vector y lo pongo
+		# a la derecha de la parte del vector ya ordenado.
+		i=$(( $j + 1 ))
+		while [ $i -lt ${#v[*]} ]
+		do
+			if [ ${v[$i]} -lt ${v[$posMenor]} ]
+				then
+				posMenor=$i
+			fi
+			i=$(( $i + 1 ))
+		done
+		aux=${v[$j]}
+		v[$j]=${v[$posMenor]}
+		v[$posMenor]=$aux
+		j=$(( $j + 1 ))
+	done
+	#echo "${v[@]}"
+}
+
+# insercion
+# Se utiliza un método similar al anterior, tomando un elemento de la parte no ordenada para
+# colocarlo en su lugar en la parte ordenada. El primer elemento del array (arreglo[0]) se
+# considerado ordenado (la lista inicial consta de un elemento). A continuación se inserta el
+# segundo elemento (arreglo[1]) en la posición correcta (delante o detrás de arreglo[0]) dependiendo
+# de que sea menor o mayor que arreglo[0]. Repetimos esta operación sucesivamente de tal
+# modo que se va colocando cada elemento en la posición correcta. El proceso se repetirá
+# length-1 veces.
+# Para colocar el dato en su lugar, se debe encontrar la posición que le corresponde en la
+# parte ordenada y hacerle un hueco de forma que se pueda insertar. Para encontrar la
+# posición se puede hacer una búsqueda secuencial desde el principio del conjunto hasta 
+# encontrar un elemento mayor que el dado. Para hacer el hueco hay que desplazar los
+# elementos pertinentes una posición a la derecha. 
+# El orden de complejidad de este algoritmo es cuadrático (O(length^2)).
+
+function inserccion {
+	
+	i=0
+
+	while [[ $i -lt ${#v[*]} ]]; do
+		j=0
+		buffer=v[i]
+		
+#		// Avanzamos por el arreglo hasta encontrar la posicion donde colocar el valor de buffer
+		while [[ ${v[j]} -lt $buffer ]]; do
+			let j=$j+1
+		done
+
+# 		// Comprobamos si su posicion no es la ultima de la parte ordenada
+		if [[ $j -lt $i ]]; then
+# 		// Movemos todos los valores a la derecha de la posicion un puesto a la derecha.
+			k=$i
+			while [[ $k -gt $j ]]; do
+				let m=$k-1
+			 	intercambiar $k $m
+			 	let k=$k-1
+			 done 
+		fi
+		let i=$i+1
+	done
+
+	#echo "${v[@]}"
+}
+
+# 	shellSort
+# 	Este metodo es una mejora del algoritmo de ordenamiento por Insercion (Insertsort).
+# 	Si tenemos en cuenta que el ordenamiento por insercion es mucho mas eficiente si
+# 	nuestra lista de numeros esta semi-ordenada y que desplaza un valor una unica
+# 	posicion a la vez.
+# 	Durante la ejecucion de este algoritmo, los numeros de la lista se van casi-ordenando
+# 	y finalmente, el ultimo paso o funcion de este algoritmo es un simple metodo por
+# 	insercion que, al estar casi-ordenados los numeros, es más eficiente.
+
+# 	https://www.youtube.com/watch?v=AeCeFdSoPEM
+# */
+# 	public static void shellSort(int[] arreglo){
+# 		for ( int incremento=arreglo.length/2; incremento>0; incremento=(incremento == 2 ? 1 : (int) Math.round(incremento/2.2))){
+# 			for (int i = incremento; i < arreglo.length; i++)
+# 			{
+# 				for (int j=i; j>=incremento && arreglo[j-incremento]>arreglo[j]; j-=incremento){
+# 					mostrar(arreglo);
+# 					intercambiar(arreglo,j,j-incremento);
+# 				}
+# 			}
+# 		}
+# 	}
+
+# 	mergeSort
+# 	Este algoritmo consiste basicamente en dividir en partes iguales la lista de numeros y
+# 	luego mezclarlos comparandolos, dejandolos ordenados.
+# 	Si se piensa en este algoritmo recursivamente, podemos imaginar que dividirá la lista
+# 	hasta tener un elemento en cada lista, luego lo compara con el que está a su lado y
+# 	según corresponda, lo situa donde corresponde.
+
+function mergeSort() {
+	local inicio=$1
+	local longitud=$2
+
+	local longitud1
+	local longitud2
+
+	if [[ $longitud -gt 1 ]]; then
+		#statements
+		let longitud1=$longitud/2
+		let longitud2=$longitud-$longitud1
+
+# 		// Se realizan divisiones recursivas del arreglo y llama al funcion
+# 		// merge para mezclarlos.		
+		mergeSort $inicio $longitud1		
+		mergeSort $(($inicio+$longitud1)) $longitud2	
+		merge $inicio $longitud1 $longitud2
+	fi
+}
+
+# 	merge
+# 	Este algoritmo nos permite mezclar los elementos divididos por mergeSort 
+# 	según corresponda.
+
+function merge() {
+	
+	local inicio=$1
+	local longitud1=$2
+	local longitud2=$3	
+
+#	// Vector utilizado temporalmente para ordenar el vector
+	arregloBuffer=()
+
+#	// Indice del vector que representa la primera mitad
+	local indice1=0; 
+
+#	// Indice del vector que representa la segunda mitad
+	local indice2=0;
+
+# 	// Mientras los subindices no lleguen al final de sus respectivos 
+# 	// subvectores, se van colocando de menor a mayor los elementos en el
+# 	// vector temporal.
+	while [[ $indice1 -lt $longitud1 && $indice2 -lt $longitud2 ]]; do
+
+		if [ ${v[$inicio+$indice1]} -lt ${v[$inicio+$longitud1+$indice2]} ]
+			then
+				arregloBuffer+=(${v[$inicio+$indice1]});
+				let indice1=$indice1+1
+			else				
+				arregloBuffer+=(${v[$inicio+$longitud1+$indice2]});
+				let indice2=$indice2+1
+		fi
+	done
+
+# 	// Cuando alguno de los subindices llega al final se copia el contenido del 
+# 	// otro subvector en el vector temporal
+	while [ $indice1 -lt $longitud1 ]
+	do		
+		arregloBuffer+=(${v[$inicio+$indice1]});
+		let indice1=$indice1+1		
+	done
+	while [ $indice2 -lt $longitud2 ]
+	do		
+		arregloBuffer+=(${v[$inicio+$longitud1+$indice2]});
+		let indice2=$indice2+1		
+	done
+
+# 	// Una vez se tiene el vector temporal ordenado se vuelcan los datos en el
+# 	// vector original.
+	i=0
+	let long1long2=$longitud1+$longitud2
+	while [[ $i -lt $long1long2 ]]; do
+		#statements
+		v[$inicio+$i]=${arregloBuffer[$i]}
+		let i=$i+1
+	done
+}
+
+# 	Quicksort
+# 	El método de ordenación rápida (Quicksort) para ordenar los elementos del array se basa
+# 	en el hecho de que es más rápido y fácil ordenar dos listas pequeñas que una lista grande.
+# 	Su nombre se debe a que este método, en general, puede ordenar una lista de datos mucho
+# 	más rápido que cualquier otro método.
+# 	El método se basa en la estrategia típica de "divide y vencerás". El array a ordenar se
+# 	divide en dos partes: una contendrá todos los valores menores o iguales a un cierto valor
+# 	(que se suele denominar pivote) y la otra con los valores mayores que dicho valor. El
+# 	primer paso es dividir el array original en dos subarrays y un valor que sirve de separación,
+# 	esto es, el pivote. Así, el array se dividirá en tres partes:
+
+# 		• La parte izquierda, que contendrá valores inferiores o iguales al pivote.
+# 		• El pivote.
+# 		• La parte derecha, que contiene valores superiores o iguales al pivote. 
+
+# 	Inicialmente, las partes izquierda y derecha no estarán ordenadas, excepto en el caso de
+# 	que estén compuestas por un único elemento.
+# 	La corrección de este algoritmo se base en los siguientes hechos: 
+
+# 	 	• El subconjunto de elementos menores que el pivote se ordenará correctamente, en
+# 		virtud del proceso recursivo.
+# 		• El mayor elemento en el subconjunto de elementos menores no es mayor que el
+# 		pivote, debido a cómo se realiza la	partición.
+# 		• El menor elemento en el subconjunto de elementos mayores no es menor que el 
+# 		pivote, debido a cómo se realiza la partición.
+# 		• El subconjunto de elementos mayores se ordena correctamente, en virtud del
+# 		proceso recursivo. 
+
+# 	El mejor caso para Quicksort se presenta cuando el pivote divide al conjunto en dos
+# 	subconjuntos de igual tamaño. En este caso tendremos dos llamadas recursivas con un
+# 	tamaño igual a la mitad del original y el tiempo de ejecución es O(length*log(length^2)).
+
+# 	Ya que los subconjuntos de igual tamaño son los mejores para Quicksort, es de esperar que
+# 	los de muy distinto tamaño sean los peores y, efectivamente, así es. Suponiendo, por
+# 	ejemplo, que el elemento que se toma como pivote es el menor del conjunto el subconjunto
+# 	de la izquierda (elementos menores) estará vacío, y el de la derecha (elementos mayores)
+# 	contendrá a todos los elementos menos al pivote. Poniéndonos en el peor de los casos,
+# 	aquél en el que siempre obtenemos uno de los dos subconjuntos vacíos y el otro contiene
+# 	n-1 elementos, la complejidad del algoritmo sería O(length^2).
+# 	En el caso medio, si el algoritmo es implementado cuidadosamente y los subconjuntos de
+# 	elementos generados en cada partición contienen aproximadamente el mismo número de
+# 	elementos, puede demostrarse que el tiempo de ejecución es O(length*log(length^2)). Para
+# 	conseguir esta implementación cuidadosa, es crucial determinar adecuadamente el
+# 	elemento pivote.  
+
+function Quicksort() {
+	izq=$1
+	der=$2
+	let medio=($izq+$der)/2
+	pivote=${v[$medio]}
+
+#	// Avanzamos izq hasta encontrar un elemento que deba estar a la derecha del pivote,
+#	// igualmente el indice derecho hasta encontrar un elemento que deba estar a la izquierda
+#	// del pivote. Si los indices no se han cruzado realizamos el intercambio.
+	while [[ izq -le der ]]; do
+		while [[ ${v[$izq]} -lt $pivote ]]; do
+			#statements
+			let izq=$izq+1
+		done
+		while [[ ${v[der]} -gt $pivote ]]; do
+			#statements
+			let der=$der-1
+		done
+		if [[ $izq -le $der ]]; then
+			#statements
+			intercambiar $izq $der
+			let izq=$izq+1
+			let der=$der-1
+		fi
+	done
+
+# 	// Si el indiador derecho se ha desplazado realizamos _Quicksort de la parte derecha
+	if [[ $1 -lt $der ]]; then
+		#statements
+		Quicksort $1 $der
+	fi
+
+#	// Si el indiador izquierdo se ha desplazado realizamos _Quicksort de la parte derecha
+	if [[ $izq -lt $2 ]]; then
+		#statements
+		Quicksort $izq $2
+	fi
+}
+
+function rellenar {
+	for i in `seq 1 $elementos`
+	do
+		v+=($RANDOM)
+	done
+}
+
+function intercambiar() {
+	aux=${v[$1]}
+	v[$1]=${v[$2]}
+	v[$2]=$aux
+}
+
+
+read -e -p "Valor inicial para las pruebas: " valorIncial
+read -e -p "Valor final para las pruebas: " valorFinal
+read -e -p "Valor del incremento para las pruebas: " valorIncremento
+
+read -e -p "Quiere realizar las pruebas para el algoritmo Burbuja (s/n): " pruebaBurbuja
+read -e -p "Quiere realizar las pruebas para el algoritmo Seleccion (s/n): " pruebaSeleccion
+read -e -p "Quiere realizar las pruebas para el algoritmo Inserccion (s/n): " pruebaInserccion
+read -e -p "Quiere realizar las pruebas para el algoritmo Merge (s/n): " pruebaMerge
+read -e -p "Quiere realizar las pruebas para el algoritmo Quicksort (s/n): " pruebaQuicksort
+
+filaBurbuja="Burbuja;"
+filaSeleccion="Seleccion;"
+filaInserccion="Inserccion;"
+filaMerge="Merge;"
+filaQuicksort="Quicksort;"
+cabecera=" ;"
+
+for elementos in `seq $valorIncial $valorIncremento $valorFinal`
+do
+	cabecera=$cabecera$elementos";"
+
+	if [[ $pruebaBurbuja == "s" ]]; then
+		#statements
+		v=()
+		rellenar
+		echo "Ordenacion por burbuja iniciada a las `date +%H:%M:%S`."
+		inicio=$(date +%s)
+		burbuja 
+		fin=$(date +%s)
+		echo "Ordenacion por burbuja finalizada a las `date +%H:%M:%S`."
+		tiempoEmpleado=$(($fin-$inicio))
+		filaBurbuja=$filaBurbuja$tiempoEmpleado";"
+		echo "Tiempo para el metodo burbuja para $elementos elementos: $tiempoEmpleado"
+	fi
+
+	if [[ $pruebaSeleccion == "s" ]]; then
+		#statements
+		v=()
+		rellenar
+		echo "Ordenacion por seleccion iniciada a las `date +%H:%M:%S`."
+		inicio=$(date +%s)
+		seleccion 
+		fin=$(date +%s)
+		echo "Ordenacion por seleccion finalizada a las `date +%H:%M:%S`."
+		tiempoEmpleado=$(($fin-$inicio))
+		filaSeleccion=$filaSeleccion$tiempoEmpleado";"
+		echo "Tiempo para el metodo seleccion para $elementos elementos: $tiempoEmpleado"
+	fi
+
+	if [[ $pruebaInserccion == "s" ]]; then
+		#statements
+		v=()
+		rellenar
+		echo "Ordenacion por inserccion iniciada a las `date +%H:%M:%S`."
+		inicio=$(date +%s)
+		inserccion 
+		fin=$(date +%s)
+		echo "Ordenacion por inserccion finalizada a las `date +%H:%M:%S`."
+		tiempoEmpleado=$(($fin-$inicio))
+		filaInserccion=$filaInserccion$tiempoEmpleado";"
+		echo "Tiempo para el metodo inserccion para $elementos elementos: $tiempoEmpleado"
+	fi
+
+		if [[ $pruebaMerge == "s" ]]; then
+		#statements
+		v=()
+		rellenar
+		echo "Ordenacion por merge iniciada a las `date +%H:%M:%S`."
+		inicio=$(date +%s)
+		mergeSort 0 ${#v[*]} 
+		fin=$(date +%s)
+		echo "Ordenacion por merge finalizada a las `date +%H:%M:%S`."
+		tiempoEmpleado=$(($fin-$inicio))
+		filaMerge=$filaMerge$tiempoEmpleado";"
+		echo "Tiempo para el metodo Merge para $elementos elementos: $tiempoEmpleado"
+	fi
+
+	if [[ $pruebaQuicksort == "s" ]]; then
+		#statements
+		v=()
+		rellenar
+		echo "Ordenacion por Quicksort iniciada a las `date +%H:%M:%S`."
+		inicio=$(date +%s)
+		Quicksort 0 $(($elementos-1)) 
+		fin=$(date +%s)
+		echo "Ordenacion por Quicksort finalizada a las `date +%H:%M:%S`."
+		tiempoEmpleado=$(($fin-$inicio))
+		filaQuicksort=$filaQuicksort$tiempoEmpleado";"
+		echo "Tiempo para el metodo Quicksort para $elementos elementos: $tiempoEmpleado"
+	fi
+	
+	echo "Finalidad la ordanacion para $elementos elementos"
+
+done
+
+echo $cabecera > resultado
+echo $filaBurbuja >> resultado
+echo $filaSeleccion >> resultado
+echo $filaInserccion >> resultado
+echo $filaMerge >> resultado
+echo $filaQuicksort >> resultado
+echo `cat resultado`
+
+# elementos=10
+# rellenar
+# echo ${v[@]}
+# mergeSort 0 9
+# echo ${v[@]}
+
+# rellenar
+
+# echo "El vector es: "
+# echo "${v[*]}"
+
+# echo "Metodo de ordenacion burbuja"
+# inicio=$(date +%N)
+# burbuja 
+# fin=$(date +%N)
+# tiempoEmpleado=$(($fin-$inicio))
+# echo $inicio
+# echo $fin
+# echo $tiempoEmpleado
+# # borrado del vector
+# v=()
+
+# rellenar
+
+# echo "El vector es: "
+# echo "${v[*]}"
+
+# echo "Metodo de ordenacion seleccion"
+# seleccion 
+
+
+
