@@ -432,4 +432,24 @@ echo $filaMerge >> resultado
 echo $filaQuicksort >> resultado
 echo `cat resultado`
 
+read -e -p "Que elementos quieres buscar?: " elemento
+echo "El elmento que buscas esta en la posicion: " + `busquedaIterativa $elemento`
+
+v=(10 12 13 14 15 16 17 18 19)
+function busquedaIterativa() {
+	local elemento=$1
+	for i in ${!v[*]}
+	do
+		if [ ${v[$i]} -e $elemento ]
+		then
+			break
+		fi
+	done
+	
+	echo $i
+}
+
+read -e -p "Que elementos quieres buscar?: " elemento
+echo "El elmento que buscas esta en la posicion: " + `busquedaIterativa $elemento`
+
 
