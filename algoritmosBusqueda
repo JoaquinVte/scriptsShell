@@ -22,19 +22,22 @@ function busquedaIterativa() {
 		echo $i
 	fi
 }
-function busquedaRecursiva() {
 
-	local elemento=$1
+function busquedaRecursiva() {
+	echo "los valores son: " $1 " - " $2 " - " $3 " - " $medio
+	read -e -p "Pulsa para continuar" puls
+
+	elemento=$1
 	local limiteInferior=$2
 	local limiteSuperior=$3
 
-	let medio=($limiteSuperior-$limiteInferior)/2
+	medio=$((($limiteSuperior-$limiteInferior)/2))
 
 	echo "los valores son: " $1 $2 $3 $medio
 
 	if [ $limiteInferior -ge $limiteSuperior ]
 	then
-		if [ ${v[$limiteInferior]} -eq $elemento ]
+		if [ ${v[$medio]} -eq $elemento ]
 		then
 			echo $limiteInferior
 		else
@@ -42,14 +45,17 @@ function busquedaRecursiva() {
 		fi
 	elif [ ${v[$medio]} -gt $elemento ]
 		then
-		busquedaRecursiva $elemento $limiteInferior $medio
+		limiteSuperior=$medio
+		busquedaRecursiva $elemento $limiteInferior $limiteSuperior
 		else
-		busquedaRecursiva $elemento $medio $limiteSuperior
+		limiteInferior=$medio
+		busquedaRecursiva $elemento $limiteInferior $limiteSuperior
 	fi
 }
 
 
 read -e -p "Que elementos quieres buscar?: " element
 #echo "El elmento que buscas esta en la posicion: "`busquedaIterativa $element`", encontrado por metodo iterativo."
-echo "El elmento que buscas esta en la posicion: "`busquedaRecursiva $element 0 9`", encontrado por metodo recursivo."
+#echo "El elmento que buscas esta en la posicion: "`busquedaRecursiva $element 0 9`", encontrado por metodo recursivo."
+busquedaRecursiva $element 0 9
 
