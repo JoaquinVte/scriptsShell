@@ -1,0 +1,55 @@
+#!/bin/bash
+#Nombre del archivo: algoritmosBusqueda
+#Fecha de creación: jue feb 15 21:44:46 CET 2018
+#Autor: joaalsai
+#Descripción del script: 
+#Ejemplo:
+
+v=(10 11 12 13 14 15 16 17 18 19)
+function busquedaIterativa() {
+	elemento=$1
+	for i in ${!v[*]}
+	do
+		if [ ${v[$i]} -eq $elemento ]
+		then
+			break;
+		fi
+	done
+	if [ ${v[$i]} -ne $elemento ]
+	then
+		echo "No encontrado"
+	else
+		echo $i
+	fi
+}
+function busquedaRecursiva() {
+
+	local elemento=$1
+	local limiteInferior=$2
+	local limiteSuperior=$3
+
+	let medio=($limiteSuperior-$limiteInferior)/2
+
+	echo "los valores son: " $1 $2 $3 $medio
+
+	if [ $limiteInferior -ge $limiteSuperior ]
+	then
+		if [ ${v[$limiteInferior]} -eq $elemento ]
+		then
+			echo $limiteInferior
+		else
+			echo "No encontrador"
+		fi
+	elif [ ${v[$medio]} -gt $elemento ]
+		then
+		busquedaRecursiva $elemento $limiteInferior $medio
+		else
+		busquedaRecursiva $elemento $medio $limiteSuperior
+	fi
+}
+
+
+read -e -p "Que elementos quieres buscar?: " element
+#echo "El elmento que buscas esta en la posicion: "`busquedaIterativa $element`", encontrado por metodo iterativo."
+echo "El elmento que buscas esta en la posicion: "`busquedaRecursiva $element 0 9`", encontrado por metodo recursivo."
+
