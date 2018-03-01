@@ -103,11 +103,12 @@ function encontrarOcurruncias() {
 	
 	local posicion=`busquedaRecursiva $1 0 $((${#v[*]}-1))`
 	
-	local izq=$(($posicion-1))
-	local der=$(($posicion+1))
-
 	if [ "$posicion" != "No encontrado" ]
 	then
+	
+		local izq=$(($posicion-1))
+		local der=$(($posicion+1))
+
 		while [ ${v[$izq]} -eq $1 ]
 		do
 			let izq=$izq-1
@@ -136,5 +137,4 @@ read -e -p "Que elementos quieres buscar?: " element
 echo "El elemento que buscas esta en la posicion: "`busquedaIterativa $element`", encontrado por metodo iterativo."
 echo "El elemento que buscas esta en la posicion: "`busquedaRecursiva $element 0 $((${#v[*]}-1))`", encontrado por metodo recursivo."
 echo "El elemento que buscas esta en las posiciones comprendidas entre: `encontrarOcurruncias $element`"
-
 
