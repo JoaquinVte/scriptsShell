@@ -99,16 +99,42 @@ function busquedaRecursiva() {
 	fi
 }
 
+function encontrarOcurruncias() {
+	
+	local posicion=`busquedaRecursiva $1 0 $((${#v[*]}-1))`
+	
+	local izq=$(($posicion-1))
+	local der=$(($posicion+1))
+
+	if [ "$posicion" != "No encontrado" ]
+	then
+		while [ ${v[$izq]} -eq $1 ]
+		do
+			let izq=$izq-1
+		done
+		while [ ${v[$der]} -eq $1 ]
+		do
+			let der=$der+1
+		done
+
+		echo $(($izq+1)) $(($der-1))
+	else
+		echo "No encontrado"
+	fi
+}
+
 read -e -p "De cuantos elementos quieres el vector?: " cantidad
 rellenar $cantidad
 
-echo "Ordenando..."
-Quicksort 0 $((${#v[*]}-1)) 
-echo "Vector ordenado!."
+#echo "Ordenando..."
+#Quicksort 0 $((${#v[*]}-1)) 
+#echo "Vector ordenado!."
+v=(1 2 3 4 5 6 7 7 7 7 8 9 20 20 152 555)
 
 read -e -p "Que elementos quieres buscar?: " element
 
-echo "El elmento que buscas esta en la posicion: "`busquedaIterativa $element`", encontrado por metodo iterativo."
-echo "El elmento que buscas esta en la posicion: "`busquedaRecursiva $element 0 $((${#v[*]}-1))`", encontrado por metodo recursivo."
+echo "El elemento que buscas esta en la posicion: "`busquedaIterativa $element`", encontrado por metodo iterativo."
+echo "El elemento que buscas esta en la posicion: "`busquedaRecursiva $element 0 $((${#v[*]}-1))`", encontrado por metodo recursivo."
+echo "El elemento que buscas esta en las posiciones comprendidas entre: `encontrarOcurruncias $element`"
 
 
