@@ -5,7 +5,58 @@
 #Descripción del script: 
 #Ejemplo:
 
-v=(10 11 12 13 14 15 16 17 18 19)
+function rellenar {
+	for i in `seq 1 $1`
+	do
+		v+=($RANDOM)
+	done
+}
+
+function intercambiar() {
+	aux=${v[$1]}
+	v[$1]=${v[$2]}
+	v[$2]=$aux
+}
+
+function Quicksort() {
+	izq=$1
+	der=$2
+	let medio=($izq+$der)/2
+	pivote=${v[$medio]}
+
+#	// Avanzamos izq hasta encontrar un elemento que deba estar a la derecha del pivote,
+#	// igualmente el indice derecho hasta encontrar un elemento que deba estar a la izquierda
+#	// del pivote. Si los indices no se han cruzado realizamos el intercambio.
+	while [[ izq -le der ]]; do
+		while [[ ${v[$izq]} -lt $pivote ]]; do
+			#statements
+			let izq=$izq+1
+		done
+		while [[ ${v[der]} -gt $pivote ]]; do
+			#statements
+			let der=$der-1
+		done
+		if [[ $izq -le $der ]]; then
+			#statements
+			intercambiar $izq $der
+			let izq=$izq+1
+			let der=$der-1
+		fi
+	done
+
+# 	// Si el indiador derecho se ha desplazado realizamos _Quicksort de la parte derecha
+	if [[ $1 -lt $der ]]; then
+		#statements
+		Quicksort $1 $der
+	fi
+
+#	// Si el indiador izquierdo se ha desplazado realizamos _Quicksort de la parte derecha
+	if [[ $izq -lt $2 ]]; then
+		#statements
+		Quicksort $izq $2
+	fi
+}
+
 function busquedaIterativa() {
 	elemento=$1
 	for i in ${!v[*]}
@@ -24,38 +75,40 @@ function busquedaIterativa() {
 }
 
 function busquedaRecursiva() {
-	echo "los valores son: " $1 " - " $2 " - " $3 " - " $medio
-	read -e -p "Pulsa para continuar" puls
-
+	
 	elemento=$1
 	local limiteInferior=$2
 	local limiteSuperior=$3
 
-	medio=$((($limiteSuperior-$limiteInferior)/2))
+	medio=$((($limiteSuperior+$limiteInferior)/2))
 
-	echo "los valores son: " $1 $2 $3 $medio
-
-	if [ $limiteInferior -ge $limiteSuperior ]
+	if [ ${v[$medio]} -eq $elemento ]
 	then
-		if [ ${v[$medio]} -eq $elemento ]
+		echo $medio
+	elif [ $limiteInferior -lt $limiteSuperior ]
 		then
-			echo $limiteInferior
-		else
-			echo "No encontrador"
-		fi
-	elif [ ${v[$medio]} -gt $elemento ]
-		then
-		limiteSuperior=$medio
-		busquedaRecursiva $elemento $limiteInferior $limiteSuperior
-		else
-		limiteInferior=$medio
-		busquedaRecursiva $elemento $limiteInferior $limiteSuperior
+			if [ ${v[$medio]} -gt $elemento ]
+			then
+				limiteSuperior=$(($medio-1))
+			else
+				limiteInferior=$(($medio+1))
+			fi
+			busquedaRecursiva $elemento $limiteInferior $limiteSuperior	
+	else
+		echo "No encontrado"
 	fi
 }
 
+read -e -p "De cuantos elementos quieres el vector?: " cantidad
+rellenar $cantidad
+
+echo "Ordenando..."
+Quicksort 0 $((${#v[*]}-1)) 
+echo "Vector ordenado!."
 
 read -e -p "Que elementos quieres buscar?: " element
-#echo "El elmento que buscas esta en la posicion: "`busquedaIterativa $element`", encontrado por metodo iterativo."
-#echo "El elmento que buscas esta en la posicion: "`busquedaRecursiva $element 0 9`", encontrado por metodo recursivo."
-busquedaRecursiva $element 0 9
+
+echo "El elmento que buscas esta en la posicion: "`busquedaIterativa $element`", encontrado por metodo iterativo."
+echo "El elmento que buscas esta en la posicion: "`busquedaRecursiva $element 0 $((${#v[*]}-1))`", encontrado por metodo recursivo."
+
 

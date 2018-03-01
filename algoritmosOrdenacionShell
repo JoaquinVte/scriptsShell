@@ -412,7 +412,7 @@ do
 		rellenar
 		echo "Ordenacion por Quicksort iniciada a las `date +%H:%M:%S`."
 		inicio=$(date +%s)
-		Quicksort 0 $(($elementos-1)) 
+		Quicksort 0 $((${#v[*]}-1)) 
 		fin=$(date +%s)
 		echo "Ordenacion por Quicksort finalizada a las `date +%H:%M:%S`."
 		tiempoEmpleado=$(($fin-$inicio))
