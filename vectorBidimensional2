@@ -1,0 +1,30 @@
+#!/bin/bash
+declare -A matrix
+num_columns=2
+num_rows=0
+
+for palabra in `cat texto`
+do
+    
+    matrix[1,$num_rows]=$palabra
+    matrix[2,$num_rows]=0
+    let num_rows=$num_rows+1
+done
+
+f1="%$((${#num_columns}+1))s"
+f2=" %9s"
+
+printf "$f1" ''
+for ((i=1;i<=num_columns;i++)) do
+    printf "$f2" $i
+done
+echo
+
+for ((j=0;j<=num_rows;j++)) do
+    printf "$f1" $j
+    for ((i=1;i<=num_columns;i++)) do
+        printf "$f2" ${matrix[$i,$j]}
+    done
+    echo
+done
+echo ${matrix[0,0]}
