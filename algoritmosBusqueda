@@ -138,10 +138,12 @@ function encontrarOcurruncias() {
 read -e -p "De cuantos elementos quieres el vector?: " cantidad
 rellenar $cantidad
 
-#echo "Ordenando..."
-#Quicksort 0 $((${#v[*]}-1)) 
-#echo "Vector ordenado!."
-v=(1 2 3 4 5 6 7 7 7 7 8 9 20 20 152 555)
+echo "Ordenando..."
+Quicksort 0 $((${#v[*]}-1)) 
+echo "Vector ordenado!."
+
+# echo "vector para realizar pruebas  v=(1 2 3 4 5 6 7 7 7 7 8 9 20 20 152 555)"
+# v=(1 2 3 4 5 6 7 7 7 7 8 9 20 20 152 555)
 
 read -e -p "Que elementos quieres buscar?: " element
 
