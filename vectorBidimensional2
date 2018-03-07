@@ -1,30 +1,67 @@
 #!/bin/bash
+
 declare -A matrix
-num_columns=2
+num_columns=1
 num_rows=0
 
-for palabra in `cat texto`
-do
-    
-    matrix[1,$num_rows]=$palabra
-    matrix[2,$num_rows]=0
-    let num_rows=$num_rows+1
-done
+function visualizar() {
+    f1="%$((${#num_columns}+1))s"
+    f2=" %9s"
 
-f1="%$((${#num_columns}+1))s"
-f2=" %9s"
-
-printf "$f1" ''
-for ((i=1;i<=num_columns;i++)) do
-    printf "$f2" $i
-done
-echo
-
-for ((j=0;j<=num_rows;j++)) do
-    printf "$f1" $j
-    for ((i=1;i<=num_columns;i++)) do
-        printf "$f2" ${matrix[$i,$j]}
+    printf "$f1" ''
+    for ((i=0;i<=num_columns;i++)) do
+        printf "$f2" $i
     done
     echo
-done
-echo ${matrix[0,0]}
+
+    for ((j=0;j<num_rows;j++)) do
+        printf "$f1" $(($j+1))
+        for ((i=0;i<=num_columns;i++)) do
+            printf "$f2" ${matrix[$i,$j]}
+        done
+        echo
+    done
+}
+
+function cargar(){
+    cont=0
+    for palabra in `cat $1`
+    do  
+        if [ $num_rows -eq 0 ]
+        then
+            matrix[0,$num_rows]=$palabra
+            matrix[1,$num_rows]=0
+            let num_rows=$num_rows+1
+        else   
+            pos=`buscar $palabra`
+           
+            if [ $pos -eq -1 ]
+            then  
+                matrix[0,$num_rows]=$palabra
+                matrix[1,$num_rows]=0
+                let num_rows=$num_rows+1
+            else
+                matrix[1,$pos]=$((${matrix[1,$pos]}+1))
+            fi
+        fi
+        let cont=$cont+1
+    done
+}
+
+function buscar(){
+    local encontrado=-1
+    local i=0
+    
+    while [[ $encontrado -eq -1 && $i -le $num_rows ]]
+    do
+        if [[ ${matrix[0,$i]} == $1 ]]
+        then
+            encontrado=$i
+        fi
+        let i=$i+1
+    done
+    echo $encontrado
+}
+
+cargar "texto"
+visualizar

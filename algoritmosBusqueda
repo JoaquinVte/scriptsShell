@@ -24,9 +24,9 @@ function Quicksort() {
 	let medio=($izq+$der)/2
 	pivote=${v[$medio]}
 
-#	// Avanzamos izq hasta encontrar un elemento que deba estar a la derecha del pivote,
-#	// igualmente el indice derecho hasta encontrar un elemento que deba estar a la izquierda
-#	// del pivote. Si los indices no se han cruzado realizamos el intercambio.
+#	Avanzamos izq hasta encontrar un elemento que deba estar a la derecha del pivote,
+#	igualmente el indice derecho hasta encontrar un elemento que deba estar a la izquierda
+#	del pivote. Si los indices no se han cruzado realizamos el intercambio.
 	while [[ izq -le der ]]; do
 		while [[ ${v[$izq]} -lt $pivote ]]; do
 			#statements
@@ -80,11 +80,14 @@ function busquedaRecursiva() {
 	local limiteInferior=$2
 	local limiteSuperior=$3
 
+	# Calculamos el punto medio del vector
 	medio=$((($limiteSuperior+$limiteInferior)/2))
 
+	# Si el punto medio del vector es el elemento buscado, devolvemos su posicion
 	if [ ${v[$medio]} -eq $elemento ]
 	then
 		echo $medio
+	# Comprobamos en que lado del vector puede estar el elemento y actualizamos limites.
 	elif [ $limiteInferior -lt $limiteSuperior ]
 		then
 			if [ ${v[$medio]} -gt $elemento ]
@@ -93,31 +96,39 @@ function busquedaRecursiva() {
 			else
 				limiteInferior=$(($medio+1))
 			fi
+			# Realizamos busqueda recursiva en un ventor de longitud/2
 			busquedaRecursiva $elemento $limiteInferior $limiteSuperior	
 	else
+		# El elemento no ha sido encontrado
 		echo "No encontrado"
 	fi
 }
 
 function encontrarOcurruncias() {
 	
+	# Buscamos la posicion del elemento
 	local posicion=`busquedaRecursiva $1 0 $((${#v[*]}-1))`
 	
+	# Comprobamos si ha sido encontrado el elemento
 	if [ "$posicion" != "No encontrado" ]
 	then
-	
+
 		local izq=$(($posicion-1))
 		local der=$(($posicion+1))
 
+		# Retrocedemos el puntero izq mientras el elemento en esa poscion sea igual.
 		while [ ${v[$izq]} -eq $1 ]
 		do
 			let izq=$izq-1
 		done
+
+		# Avanzamos el puntero der mientras el elemento en esa poscion sea igual.
 		while [ ${v[$der]} -eq $1 ]
 		do
 			let der=$der+1
 		done
 
+		# Devolvemos la posicion izq y der acutalizadas con las ocurrencias encontradas.
 		echo $(($izq+1)) $(($der-1))
 	else
 		echo "No encontrado"
