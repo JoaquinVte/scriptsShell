@@ -1,0 +1,74 @@
+#!/bin/bash
+
+declare -A matrix
+num_columns=2
+num_rows=0
+
+function visualizar() {
+    f1="%$((${#num_columns}+1))s"
+    f2=" %50s"
+
+    printf "$f1" ''
+    printf "$f2" 'Nombre Completo'
+    printf "$f2" 'Direccion/es de correo electronico'
+    printf "$f2" 'Departamento'    
+    echo
+    echo "-----------------------------------------------------------------------------------------------------------------------------------------------------------"
+    echo
+
+    for ((j=0;j<num_rows;j++)) do
+        printf "$f1" $(($j+1))
+        for ((i=0;i<=num_columns;i++)) do
+            printf "$f2" ${matrix[$i,$j]}
+        done
+        echo
+    done
+}
+
+function insertar(){  
+        if [ $num_rows -eq 0 ]
+        then
+            matrix[0,$num_rows]=$1
+            matrix[1,$num_rows]=$2
+            matrix[2,$num_rows]=$3
+
+            let num_rows=$num_rows+1
+        else   
+            pos=`buscar $1`
+           
+            if [ $pos -eq -1 ]
+            then  
+                matrix[0,$num_rows]=$1
+                matrix[1,$num_rows]=$2
+                matrix[2,$num_rows]=$3
+                let num_rows=$num_rows+1
+            else
+                matrix[1,$pos]=${matrix[1,$pos]}","$2
+            fi
+        fi
+}
+
+function buscar(){
+    local encontrado=-1
+    local i=0
+    
+    while [[ $encontrado -eq -1 && $i -le $num_rows ]]
+    do
+        if [[ ${matrix[0,$i]} == $1 ]]
+        then
+            encontrado=$i
+        fi
+        let i=$i+1
+    done
+    echo $encontrado
+}
+
+lineas=$(wc texto2 | cut -d" " -f3)
+
+for i in `seq 1 1 $(($lineas+1))`
+do
+    fila=$(cat texto2 | sed -n "$i p")
+    insertar `echo $fila | cut -d";" -f1`  `echo $fila | cut -d";" -f2` `echo $fila | cut -d";" -f3` 
+done
+
+visualizar

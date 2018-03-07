@@ -24,7 +24,6 @@ function visualizar() {
 }
 
 function cargar(){
-    cont=0
     for palabra in `cat $1`
     do  
         if [ $num_rows -eq 0 ]
@@ -44,7 +43,6 @@ function cargar(){
                 matrix[1,$pos]=$((${matrix[1,$pos]}+1))
             fi
         fi
-        let cont=$cont+1
     done
 }
 
